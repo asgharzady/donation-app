@@ -39,7 +39,7 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("API documentation with JWT authentication"))
                 .servers(List.of(
-                        new Server().url("https://aml-backend.chenchenapp.com").description("Production Server")
+                        new Server().url("http://aml-backend.chenchenapp.com").description("Production Server")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
@@ -58,7 +58,7 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("API documentation with JWT authentication"))
                 .servers(List.of(
-                        new Server().url("https://Uatapi.ozerdal.org/").description("dev Server")
+                        new Server().url("http://Uatapi.ozerdal.org/").description("dev Server")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
