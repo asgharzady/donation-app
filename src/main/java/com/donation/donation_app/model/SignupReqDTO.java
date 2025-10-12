@@ -7,7 +7,10 @@ import lombok.Data;
 @Data
 public class SignupReqDTO {
 
-    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String dob;
     @NotBlank(message = "Password is mandatory")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{12,}$",
@@ -15,9 +18,6 @@ public class SignupReqDTO {
             groups = {PasswordRequired.class, PasswordOptional.class}
     )
     private String password;
-    private String designation;
-    private Boolean isBlocked;
-
     public interface PasswordRequired {}
     public interface PasswordOptional {}
 

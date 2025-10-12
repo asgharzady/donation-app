@@ -14,11 +14,12 @@ public class IAM {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userName;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String dob;
     private String password;
-    private String designation;
-    private String previousPasswords;
-    private boolean isBlocked;
+    private boolean isBlocked = false;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

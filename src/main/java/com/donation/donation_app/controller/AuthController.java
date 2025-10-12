@@ -1,6 +1,7 @@
 package com.donation.donation_app.controller;
 
 
+import com.donation.donation_app.model.ResponseDTO;
 import com.donation.donation_app.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +22,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<ResponseDTO> login(@RequestParam String username, @RequestParam String password) {
         if (STATIC_USERNAME.equals(username) && STATIC_PASSWORD.equals(password)) {
             String token = jwtUtil.generateToken(username);
-            return ResponseEntity.ok().body("Bearer " + token);
+            return ResponseEntity.ok().body(new ResponseDTO("Bearer " + token));
         }
-        return ResponseEntity.status(401).body("Invalid username or password");
+        return ResponseEntity.status(401).body(new ResponseDTO("Invalid username or password"));
     }
 
     @PostMapping("/refresh")

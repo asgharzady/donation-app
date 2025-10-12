@@ -23,17 +23,17 @@ public class IAMController {
 
     @PostMapping(value = "/sign-up")
     public ResponseEntity<ResponseDTO> SignUpUser(@Validated(SignupReqDTO.PasswordRequired.class) @RequestBody SignupReqDTO request) {
-        log.info("Sign up request and designation: " + request.getUsername() + ", " + request.getDesignation());
+        log.info("Sign up request and designation: " + request.getEmail());
         iamService.SignUp(request);
-        log.info("returning ok for signup req: " + request.getUsername());
+        log.info("returning ok for signup req: " + request.getEmail());
         return ResponseEntity.ok(new ResponseDTO("sign up successful"));
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<ResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
-        log.info("login request: " + request.getUserName());
+        log.info("login request: " + request.getEmail());
         iamService.login(request);
-        log.info("returning ok for login req: " + request.getUserName());
+        log.info("returning ok for login req: " + request.getEmail());
         return ResponseEntity.ok(new ResponseDTO("login successful"));
     }
 //

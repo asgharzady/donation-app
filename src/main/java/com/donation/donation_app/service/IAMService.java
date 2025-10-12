@@ -29,28 +29,30 @@ public class IAMService {
     private static final Logger log = LoggerFactory.getLogger(IAMService.class);
 
     public void SignUp(SignupReqDTO request) {
-        IAM checkExistingUser = iamRepository.findByUserName(request.getUsername());
+        IAM checkExistingUser = iamRepository.findByEmail(request.getEmail());
         if (checkExistingUser != null) {
             throw new CustomException("username already taken !");
         } else {
-            log.info("creating account with username " + request.getUsername());
+            log.info("creating account with username " + request.getEmail());
             IAM iam = new IAM();
-            iam.setUserName(request.getUsername());
+            iam.setFirstName(request.getFirstName());
+            iam.setLastName(request.getLastName());
+            iam.setEmail(request.getEmail());
+            iam.setDob(request.getDob());
+            iam.setEmail(request.getEmail());
             iam.setPassword(passwordEncoder.encode(request.getPassword()));
-            iam.setPreviousPasswords(passwordEncoder.encode(request.getPassword()));
-            iam.setDesignation(request.getDesignation());
             iam.setBlocked(false);
             iamRepository.save(iam);
         }
     }
 
     public void login(LoginReqDTO request) {
-        IAM checkExistingUser = iamRepository.findByUserName(request.getUserName());
+        IAM checkExistingUser = iamRepository.findByEmail(request.getEmail());
         if (checkExistingUser == null) {
-            log.info("username not found for user: " + request.getUserName());
+            log.info("username not found for user: " + request.getEmail());
             throw new CustomException("username not found !");
         } else if (!passwordEncoder.matches(request.getPassword(), checkExistingUser.getPassword())) {
-            log.info("wrong password for user: " + request.getUserName());
+            log.info("wrong password for user: " + request.getEmail());
             throw new CustomException("wrong password !");
         }
     }
