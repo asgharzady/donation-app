@@ -18,6 +18,9 @@ public class IAM {
     private String lastName;
     private String email;
     private String dob;
+    private String mobileNo;
+    private String timezone;
+    private String defaultPaymentMethod;
     private String password;
     private boolean isBlocked = false;
     @CreationTimestamp

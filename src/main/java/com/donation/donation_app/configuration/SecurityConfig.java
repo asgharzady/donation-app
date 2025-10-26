@@ -25,6 +25,9 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**",
+                        "/user/sign-up",
+                        "/user/profile-setup",
+                        "/user/login",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-resources/**",

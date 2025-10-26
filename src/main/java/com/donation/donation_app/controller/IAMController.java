@@ -1,7 +1,10 @@
 package com.donation.donation_app.controller;
 
 
+import com.donation.donation_app.entity.IAM;
+import com.donation.donation_app.model.IAMResponseDTO;
 import com.donation.donation_app.model.LoginReqDTO;
+import com.donation.donation_app.model.ProfileSetupReqDTO;
 import com.donation.donation_app.model.ResponseDTO;
 import com.donation.donation_app.model.SignupReqDTO;
 import com.donation.donation_app.service.IAMService;
@@ -35,6 +38,22 @@ public class IAMController {
         iamService.login(request);
         log.info("returning ok for login req: " + request.getEmail());
         return ResponseEntity.ok(new ResponseDTO("login successful"));
+    }
+
+    @PostMapping(value = "/profile-setup")
+    public ResponseEntity<ResponseDTO> profileSetup(@Validated @RequestBody ProfileSetupReqDTO request) {
+        log.info("Profile setup request for email: " + request.getEmail());
+        iamService.profileSetup(request);
+        log.info("Profile setup completed successfully for email: " + request.getEmail());
+        return ResponseEntity.ok(new ResponseDTO("Profile setup successful"));
+    }
+
+    @GetMapping(value = "/{email}")
+    public ResponseEntity<IAMResponseDTO> getUserByEmail(@PathVariable("email") String email) {
+        log.info("Get user request for email: " + email);
+        IAMResponseDTO user = iamService.getByEmail(email);
+        log.info("Returning user data for email: " + email);
+        return ResponseEntity.ok(user);
     }
 //
 //    @PutMapping

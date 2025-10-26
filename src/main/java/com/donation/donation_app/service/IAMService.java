@@ -2,7 +2,9 @@ package com.donation.donation_app.service;
 
 import com.donation.donation_app.Exception.CustomException;
 import com.donation.donation_app.entity.IAM;
+import com.donation.donation_app.model.IAMResponseDTO;
 import com.donation.donation_app.model.LoginReqDTO;
+import com.donation.donation_app.model.ProfileSetupReqDTO;
 import com.donation.donation_app.model.SignupReqDTO;
 import com.donation.donation_app.repository.IAMRepository;
 import org.slf4j.Logger;
@@ -55,6 +57,34 @@ public class IAMService {
             log.info("wrong password for user: " + request.getEmail());
             throw new CustomException("wrong password !");
         }
+    }
+
+    @Transactional
+    public void profileSetup(ProfileSetupReqDTO request) {
+        IAM existingUser = iamRepository.findByEmail(request.getEmail());
+        if (existingUser == null) {
+            log.info("User not found for email: " + request.getEmail());
+            throw new CustomException("User account not found with this email!");
+        } else {
+            log.info("Updating profile for user: " + request.getEmail());
+            existingUser.setMobileNo(request.getMobileNo());
+            existingUser.setTimezone(request.getTimezone());
+            existingUser.setDefaultPaymentMethod(request.getDefaultPaymentMethod());
+            iamRepository.save(existingUser);
+            log.info("Profile updated successfully for user: " + request.getEmail());
+        }
+    }
+
+    public IAMResponseDTO getByEmail(String email) {
+        IAM user = iamRepository.findByEmail(email);
+        if (user == null) {
+            log.info("User not found for email: " + email);
+            throw new CustomException("User not found with this email!");
+        }
+        log.info("Retrieved user successfully for email: " + email);
+        
+        // Convert IAM entity to IAMResponseDTO using static toDTO method
+        return IAMResponseDTO.toDTO(user);
     }
 //
 //    public void updateUser(SignupReqDTO request) {
