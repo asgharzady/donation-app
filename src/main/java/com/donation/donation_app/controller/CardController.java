@@ -30,7 +30,7 @@ public class CardController {
 		log.info("Save card request for email: " + request.getEmail());
 		cardService.saveCard(request);
 		log.info("Card saved for email: " + request.getEmail());
-		return ResponseEntity.ok(new ResponseDTO("card saved"));
+		return ResponseEntity.ok(new ResponseDTO("success"));
 	}
 
 	@GetMapping("/get/{email}")
@@ -41,5 +41,7 @@ public class CardController {
 
 	}
 }
+
+
 
 

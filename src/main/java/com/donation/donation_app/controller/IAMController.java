@@ -8,6 +8,7 @@ import com.donation.donation_app.model.ProfileSetupReqDTO;
 import com.donation.donation_app.model.ResponseDTO;
 import com.donation.donation_app.model.SignupReqDTO;
 import com.donation.donation_app.service.IAMService;
+import com.donation.donation_app.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class IAMController {
     @Autowired
     private IAMService iamService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping(value = "/sign-up")
     public ResponseEntity<ResponseDTO> SignUpUser(@Validated(SignupReqDTO.PasswordRequired.class) @RequestBody SignupReqDTO request) {
         log.info("Sign up request and designation: " + request.getEmail());
@@ -36,8 +40,8 @@ public class IAMController {
     public ResponseEntity<ResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
         log.info("login request: " + request.getEmail());
         iamService.login(request);
-        log.info("returning ok for login req: " + request.getEmail());
-        return ResponseEntity.ok(new ResponseDTO("login successful"));
+        String token = jwtUtil.generateToken("username");
+        return ResponseEntity.ok().body(new ResponseDTO("Bearer " + token));
     }
 
     @PostMapping(value = "/profile-setup")

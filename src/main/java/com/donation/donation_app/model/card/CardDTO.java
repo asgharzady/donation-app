@@ -19,7 +19,6 @@ public class CardDTO {
 	@NotBlank
 	private String cvv;
 
-
 }
 
 
