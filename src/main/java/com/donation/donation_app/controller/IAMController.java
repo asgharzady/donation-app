@@ -1,6 +1,7 @@
 package com.donation.donation_app.controller;
 
 
+import com.donation.donation_app.Exception.CustomException;
 import com.donation.donation_app.entity.IAM;
 import com.donation.donation_app.model.IAMResponseDTO;
 import com.donation.donation_app.model.LoginReqDTO;
@@ -40,13 +41,17 @@ public class IAMController {
     public ResponseEntity<ResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
         log.info("login request: " + request.getEmail());
         iamService.login(request);
-        String token = jwtUtil.generateToken("username");
+        String token = jwtUtil.generateToken(request.getEmail());
         return ResponseEntity.ok().body(new ResponseDTO("Bearer " + token));
     }
 
     @PostMapping(value = "/profile-setup")
     public ResponseEntity<ResponseDTO> profileSetup(@Validated @RequestBody ProfileSetupReqDTO request) {
         log.info("Profile setup request for email: " + request.getEmail());
+        String tokenEmail = JwtUtil.getAuthenticatedEmail();
+        if (tokenEmail == null || !tokenEmail.equals(request.getEmail())) {
+            throw new CustomException("Unauthorized: wrong token");
+        }
         iamService.profileSetup(request);
         log.info("Profile setup completed successfully for email: " + request.getEmail());
         return ResponseEntity.ok(new ResponseDTO("Profile setup successful"));
@@ -55,34 +60,14 @@ public class IAMController {
     @GetMapping(value = "/{email}")
     public ResponseEntity<IAMResponseDTO> getUserByEmail(@PathVariable("email") String email) {
         log.info("Get user request for email: " + email);
+        String tokenEmail = JwtUtil.getAuthenticatedEmail();
+        if (tokenEmail == null || !tokenEmail.equals(email)) {
+            throw new CustomException("Unauthorized: wrong token");
+        }
+        
         IAMResponseDTO user = iamService.getByEmail(email);
         log.info("Returning user data for email: " + email);
         return ResponseEntity.ok(user);
     }
-//
-//    @PutMapping
-//    public ResponseEntity<Void> updateUser(@Validated(SignupReqDTO.PasswordOptional.class) @RequestBody SignupReqDTO request) {
-//        log.info("updating user: " + request.getUsername());
-//        iamService.updateUser(request);
-//        log.info("returning ok for update user " + request.getUsername());
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @GetMapping("/findAll/{page}/{size}")
-//    public ResponseEntity<PaginatedUsers> getAll(@PathVariable("page") Integer page, @PathVariable("size") Integer size) {
-//        return ResponseEntity.ok(iamService.getAllPaginsated(PageRequest.of(page, size)));
-//    }
-//
-//    @GetMapping("/{username}")
-//    public ResponseEntity<IAM> getByUsername(@PathVariable("username") String username) {
-//        return ResponseEntity.ok(iamService.getByUsername(username));
-//    }
-//
-//    @DeleteMapping("/{userName}")
-//    public ResponseEntity<Void> deleteUser(@PathVariable("userName") String userName) {
-//        iamService.deleteUser(userName);
-//        return ResponseEntity.ok().build();
-//    }
-
 
 }

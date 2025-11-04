@@ -2,6 +2,8 @@ package com.donation.donation_app.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -41,5 +43,17 @@ public class JwtUtil {
             // Extract username from expired token
             return e.getClaims().getSubject();
         }
+    }
+
+    /**
+     * Gets the authenticated email from SecurityContext
+     * @return email from token, or null if not authenticated
+     */
+    public static String getAuthenticatedEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() != null) {
+            return (String) authentication.getPrincipal();
+        }
+        return null;
     }
 }
