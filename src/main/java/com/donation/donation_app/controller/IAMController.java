@@ -6,17 +6,20 @@ import com.donation.donation_app.entity.IAM;
 import com.donation.donation_app.model.IAMResponseDTO;
 import com.donation.donation_app.model.LoginReqDTO;
 import com.donation.donation_app.model.ProfileSetupReqDTO;
+import com.donation.donation_app.model.RefreshTokenRequestDTO;
 import com.donation.donation_app.model.ResponseDTO;
 import com.donation.donation_app.model.SignupReqDTO;
+import com.donation.donation_app.model.TokenResponseDTO;
 import com.donation.donation_app.service.IAMService;
 import com.donation.donation_app.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 
 @RestController
 @RequestMapping("user")
@@ -38,11 +41,24 @@ public class IAMController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<ResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
+    public ResponseEntity<TokenResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
         log.info("login request: " + request.getEmail());
         iamService.login(request);
-        String token = jwtUtil.generateToken(request.getEmail());
-        return ResponseEntity.ok().body(new ResponseDTO("Bearer " + token));
+        
+        // Generate access token
+        String accessToken = jwtUtil.generateToken(request.getEmail());
+        
+        // Generate refresh token
+        String refreshToken = jwtUtil.generateRefreshToken(request.getEmail());
+        
+        // Calculate expiry date (7 days from now)
+        Instant expiryDate = Instant.now().plusSeconds(7 * 24 * 60 * 60);
+        
+        // Save refresh token to database
+        iamService.saveRefreshToken(refreshToken, request.getEmail(), expiryDate);
+        
+        log.info("Login successful for user: " + request.getEmail());
+        return ResponseEntity.ok().body(new TokenResponseDTO(accessToken, refreshToken));
     }
 
     @PostMapping(value = "/profile-setup")
@@ -55,6 +71,24 @@ public class IAMController {
         iamService.profileSetup(request);
         log.info("Profile setup completed successfully for email: " + request.getEmail());
         return ResponseEntity.ok(new ResponseDTO("Profile setup successful"));
+    }
+
+    @PostMapping(value = "/refresh")
+    public ResponseEntity<TokenResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO request) {
+        log.info("Refresh token request received");
+        
+        if (request.getRefreshToken() == null || request.getRefreshToken().isEmpty()) {
+            throw new CustomException("Refresh token is required");
+        }
+        
+        // Validate refresh token and get user
+        IAM user = iamService.validateAndGetUser(request.getRefreshToken());
+        
+        // Generate new access token for the user
+        String newAccessToken = jwtUtil.generateToken(user.getEmail());
+        
+        log.info("New access token generated for user: " + user.getEmail());
+        return ResponseEntity.ok().body(new TokenResponseDTO(newAccessToken, request.getRefreshToken()));
     }
 
     @GetMapping(value = "/{email}")
