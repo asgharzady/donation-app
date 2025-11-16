@@ -5,12 +5,16 @@ import com.donation.donation_app.model.card.CardDTO;
 import jakarta.validation.Valid;
 import lombok.Data;
 
+import java.time.Instant;
+
 @Data
     public class PaymentHistoryResponseDTO {
     private String amount;
     private String status;
     private String email;
     private String toAccount;
+
+    private Instant createdAt;
 
 
     public static PaymentHistoryResponseDTO toDTO(Payment payment){
@@ -19,7 +23,7 @@ import lombok.Data;
         response.setStatus(payment.getStatus());
         response.setEmail(payment.getEmail());
         response.setToAccount(payment.getToAccount());
-
+        response.setCreatedAt(payment.getCreatedAt());
         return response;
     }
 }
