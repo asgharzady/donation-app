@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.stream.Stream;
 
 @Table(name = "iam")
 @Data
@@ -27,4 +28,10 @@ public class IAM {
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
+
+
+    public boolean isComplete() {
+        return Stream.of(firstName, lastName, email, dob, mobileNo,timezone,defaultPaymentMethod)
+                .allMatch(f -> f != null && !f.trim().isEmpty());
+    }
 }

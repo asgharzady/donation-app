@@ -104,4 +104,18 @@ public class IAMController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping(value = "is-profile-completed/{email}")
+    public ResponseEntity<Boolean> isProfileCompleted(@PathVariable("email") String email) {
+        log.info("get is profile completed for email: " + email);
+        String tokenEmail = JwtUtil.getAuthenticatedEmail();
+        if (tokenEmail == null || !tokenEmail.equals(email)) {
+            throw new CustomException("Unauthorized: wrong token");
+        }
+        boolean isProfileCompleted = iamService.isProfileCompleted(email);
+        log.info("Returning is profile completed for email: " + email);
+        return ResponseEntity.ok(isProfileCompleted);
+    }
+
+
+
 }

@@ -121,11 +121,6 @@ public class IAMService {
         log.info("Refresh token saved for user: " + email);
     }
 
-    /**
-     * Validates a refresh token and returns the associated user
-     * @param refreshToken the refresh token to validate
-     * @return the IAM user associated with the token
-     */
     @Transactional
     public IAM validateAndGetUser(String refreshToken) {
         // First validate the JWT token structure
@@ -159,84 +154,18 @@ public class IAMService {
         return tokenEntity.getUser();
     }
 
-    /**
-     * Deletes a refresh token
-     * @param token the refresh token to delete
-     */
     @Transactional
     public void deleteRefreshToken(String token) {
         refreshTokenRepository.deleteByToken(token);
         log.info("Refresh token deleted");
     }
-//
-//    public void updateUser(SignupReqDTO request) {
-//        IAM checkExistingUser = iamRepository.findByUserName(request.getUsername());
-//        if (checkExistingUser == null) {
-//            throw new CustomException("username not found !");
-//        } else {
-//            if (request.getDesignation() != null) {
-//                checkExistingUser.setDesignation(request.getDesignation());
-//            }
-//            if (request.getIsBlocked() != null) {
-//                checkExistingUser.setBlocked(request.getIsBlocked());
-//            }
-//            if (request.getPassword() != null) {
-//                String encodedNewPassword = passwordEncoder.encode(request.getPassword());
-//                // Parse the stored string into a list of previous passwords
-//                List<String> previousPasswords = new ArrayList<>();
-//                if (checkExistingUser.getPreviousPasswords() != null && !checkExistingUser.getPreviousPasswords().isEmpty()) {
-//                    previousPasswords = new ArrayList<>(Arrays.asList(checkExistingUser.getPreviousPasswords().split(",")));
-//                }
-//
-//                // Check if the new password matches any of the previous passwords
-//                if (previousPasswords.stream()
-//                        .anyMatch(previousPassword -> passwordEncoder.matches(request.getPassword(), previousPassword))) {
-//                    log.info("The new password cannot be one of the previous 3 passwords.");
-//                    throw new CustomException("The new password cannot be one of the previous 3 passwords.");
-//                }
-//
-//                // Update the password
-//                checkExistingUser.setPassword(encodedNewPassword);
-//
-//                // Update the previous passwords list
-//                if (previousPasswords.size() >= 4) {
-//                    previousPasswords.remove(0);
-//                }
-//                previousPasswords.add(encodedNewPassword);
-//
-//                // Convert the updated list back to a comma-separated string
-//                String updatedPreviousPasswords = String.join(",", previousPasswords);
-//                checkExistingUser.setPreviousPasswords(updatedPreviousPasswords);
-//
-//            }
-//            iamRepository.save(checkExistingUser);
-//        }
-//    }
-//
-//    public PaginatedUsers getAllPaginsated(Pageable pageable) {
-//        PaginatedUsers response = new PaginatedUsers();
-//        response.setData(iamRepository.findAll(pageable).stream().toList());
-//        response.setTotalDocuments(iamRepository.count());
-//        return response;
-//    }
-//
-//    public IAM getByUsername(String username) {
-//        IAM iam = iamRepository.findByUserName(username);
-//
-//        if (iam == null) {
-//            throw new CustomException("username not found");
-//        }
-//
-//        return iam;
-//    }
-//
-//    @Transactional
-//    public Boolean deleteUser(String username) {
-//        if (iamRepository.existsByUserName(username)) {
-//            iamRepository.deleteByUserName(username);
-//            return true;
-//        }
-//        throw new CustomException("username not found");
-//    }
 
+    public boolean isProfileCompleted(String email){
+        IAM user = iamRepository.findByEmail(email);
+        if (user == null) {
+            throw new CustomException("User not found with email: " + email);
+        }
+        return user.isComplete();
+
+    }
 }
