@@ -38,9 +38,9 @@ public class PaymentController {
 		if (tokenEmail == null || !tokenEmail.equals(request.getEmail())) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
-		paymentService.doPayment(request);
+		String status = paymentService.doPayment(request);
 		log.info("Card saved for email: " + request.getEmail());
-		return ResponseEntity.ok(new ResponseDTO("success"));
+		return ResponseEntity.ok(new ResponseDTO(status));
 	}
 
 	@GetMapping("/get-history/{email}")
