@@ -18,7 +18,6 @@ public class Payment {
     private String amount;
     private String status;
     private String phoneNo;
-    private String toAccount;
     private String cardNo;
     @CreationTimestamp
     private Instant createdAt;

@@ -11,6 +11,5 @@ public class PaymentRequest {
     private String amount;
     private String status;
     private String phoneNo;
-    private String toAccount;
 
 }

@@ -55,12 +55,10 @@ public class PaymentService {
         this.iamRepository = iamRepository;
     }
 
-    public String doPayment(PaymentRequest paymentRequest){
+    public PaymentHistoryResponseDTO doPayment(PaymentRequest paymentRequest){
         Payment payment = new Payment();
         payment.setAmount(paymentRequest.getAmount());
         payment.setPhoneNo(paymentRequest.getPhoneNo());
-        payment.setToAccount(paymentRequest.getToAccount());
-        payment.setCardNo(paymentRequest.getCard().getCardNo());
         String status = doTrx(paymentRequest);
         if(status.equals("SUCCESS")){
             payment.setStatus("success");
@@ -70,7 +68,7 @@ public class PaymentService {
         }
         paymentRepository.save(payment);
 
-        return status;
+        return PaymentHistoryResponseDTO.toDTO(payment);
     }
 
     public List<PaymentHistoryResponseDTO> getHistory(String phoneNo){

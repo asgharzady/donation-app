@@ -32,15 +32,15 @@ public class PaymentController {
 
 
 	@PostMapping("/send")
-	public ResponseEntity<ResponseDTO> save(@Validated @RequestBody PaymentRequest request) {
+	public ResponseEntity<PaymentHistoryResponseDTO> save(@Validated @RequestBody PaymentRequest request) {
 		log.info("payment request for phoneNo: " + request.getPhoneNo());
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
-		String status = paymentService.doPayment(request);
+		PaymentHistoryResponseDTO response = paymentService.doPayment(request);
 		log.info("Payment processed for phoneNo: " + request.getPhoneNo());
-		return ResponseEntity.ok(new ResponseDTO(status));
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/get-history/{phoneNo}")

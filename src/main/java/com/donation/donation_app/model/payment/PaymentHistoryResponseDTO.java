@@ -22,7 +22,6 @@ import java.time.Instant;
         response.setAmount(payment.getAmount());
         response.setStatus(payment.getStatus());
         response.setPhoneNo(payment.getPhoneNo());
-        response.setToAccount(payment.getToAccount());
         response.setCreatedAt(payment.getCreatedAt());
         return response;
     }
