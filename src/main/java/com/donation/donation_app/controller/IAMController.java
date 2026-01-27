@@ -34,42 +34,42 @@ public class IAMController {
 
     @PostMapping(value = "/sign-up")
     public ResponseEntity<ResponseDTO> SignUpUser(@Validated(SignupReqDTO.PasswordRequired.class) @RequestBody SignupReqDTO request) {
-        log.info("Sign up request and designation: " + request.getEmail());
+        log.info("Sign up request for phoneNo: " + request.getPhoneNo());
         iamService.SignUp(request);
-        log.info("returning ok for signup req: " + request.getEmail());
+        log.info("returning ok for signup req: " + request.getPhoneNo());
         return ResponseEntity.ok(new ResponseDTO("sign up successful"));
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<TokenResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
-        log.info("login request: " + request.getEmail());
+        log.info("login request: " + request.getPhoneNo());
         iamService.login(request);
         
         // Generate access token
-        String accessToken = jwtUtil.generateToken(request.getEmail());
+        String accessToken = jwtUtil.generateToken(request.getPhoneNo());
         
         // Generate refresh token
-        String refreshToken = jwtUtil.generateRefreshToken(request.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(request.getPhoneNo());
         
         // Calculate expiry date (7 days from now)
         Instant expiryDate = Instant.now().plusSeconds(7 * 24 * 60 * 60);
         
         // Save refresh token to database
-        iamService.saveRefreshToken(refreshToken, request.getEmail(), expiryDate);
+        iamService.saveRefreshToken(refreshToken, request.getPhoneNo(), expiryDate);
         
-        log.info("Login successful for user: " + request.getEmail());
+        log.info("Login successful for user: " + request.getPhoneNo());
         return ResponseEntity.ok().body(new TokenResponseDTO(accessToken, refreshToken));
     }
 
     @PostMapping(value = "/profile-setup")
     public ResponseEntity<ResponseDTO> profileSetup(@Validated @RequestBody ProfileSetupReqDTO request) {
-        log.info("Profile setup request for email: " + request.getEmail());
-        String tokenEmail = JwtUtil.getAuthenticatedEmail();
-        if (tokenEmail == null || !tokenEmail.equals(request.getEmail())) {
+        log.info("Profile setup request for phoneNo: " + request.getPhoneNo());
+        String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+        if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
             throw new CustomException("Unauthorized: wrong token");
         }
         iamService.profileSetup(request);
-        log.info("Profile setup completed successfully for email: " + request.getEmail());
+        log.info("Profile setup completed successfully for phoneNo: " + request.getPhoneNo());
         return ResponseEntity.ok(new ResponseDTO("Profile setup successful"));
     }
 
@@ -85,34 +85,34 @@ public class IAMController {
         IAM user = iamService.validateAndGetUser(request.getRefreshToken());
         
         // Generate new access token for the user
-        String newAccessToken = jwtUtil.generateToken(user.getEmail());
+        String newAccessToken = jwtUtil.generateToken(user.getPhoneNo());
         
-        log.info("New access token generated for user: " + user.getEmail());
+        log.info("New access token generated for user: " + user.getPhoneNo());
         return ResponseEntity.ok().body(new TokenResponseDTO(newAccessToken, request.getRefreshToken()));
     }
 
-    @GetMapping(value = "/{email}")
-    public ResponseEntity<IAMResponseDTO> getUserByEmail(@PathVariable("email") String email) {
-        log.info("Get user request for email: " + email);
-        String tokenEmail = JwtUtil.getAuthenticatedEmail();
-        if (tokenEmail == null || !tokenEmail.equals(email)) {
+    @GetMapping(value = "/{phoneNo}")
+    public ResponseEntity<IAMResponseDTO> getUserByPhoneNo(@PathVariable("phoneNo") String phoneNo) {
+        log.info("Get user request for phoneNo: " + phoneNo);
+        String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+        if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
             throw new CustomException("Unauthorized: wrong token");
         }
         
-        IAMResponseDTO user = iamService.getByEmail(email);
-        log.info("Returning user data for email: " + email);
+        IAMResponseDTO user = iamService.getByPhoneNo(phoneNo);
+        log.info("Returning user data for phoneNo: " + phoneNo);
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping(value = "is-profile-completed/{email}")
-    public ResponseEntity<Boolean> isProfileCompleted(@PathVariable("email") String email) {
-        log.info("get is profile completed for email: " + email);
-        String tokenEmail = JwtUtil.getAuthenticatedEmail();
-        if (tokenEmail == null || !tokenEmail.equals(email)) {
+    @GetMapping(value = "is-profile-completed/{phoneNo}")
+    public ResponseEntity<Boolean> isProfileCompleted(@PathVariable("phoneNo") String phoneNo) {
+        log.info("get is profile completed for phoneNo: " + phoneNo);
+        String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+        if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
             throw new CustomException("Unauthorized: wrong token");
         }
-        boolean isProfileCompleted = iamService.isProfileCompleted(email);
-        log.info("Returning is profile completed for email: " + email);
+        boolean isProfileCompleted = iamService.isProfileCompleted(phoneNo);
+        log.info("Returning is profile completed for phoneNo: " + phoneNo);
         return ResponseEntity.ok(isProfileCompleted);
     }
 

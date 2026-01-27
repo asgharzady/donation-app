@@ -27,8 +27,8 @@ public class CardService {
 	}
 
 	public void saveCard(CardSaveReqDTO request) {
-		if (!iamRepository.existsByEmail(request.getEmail())) {
-			throw new CustomException("email not found");
+		if (!iamRepository.existsByPhoneNo(request.getPhoneNo())) {
+			throw new CustomException("phone number not found");
 		}
 
 		Card card = new Card();
@@ -36,13 +36,13 @@ public class CardService {
 		card.setName(request.getName());
 		card.setExpDate(request.getExpDate());
 		card.setCvv(request.getCvv());
-		card.setEmail(request.getEmail());
+		card.setPhoneNo(request.getPhoneNo());
 
 		cardRepository.save(card);
 	}
 
-	public List<CardDTO> getCards(String email){
-		ArrayList<Card> cards = cardRepository.findAllByEmail(email);
+	public List<CardDTO> getCards(String phoneNo){
+		ArrayList<Card> cards = cardRepository.findAllByPhoneNo(phoneNo);
 		return cards.stream().map(c -> c.toDto(c)).toList();
 
 
@@ -51,7 +51,3 @@ public class CardService {
 
 
 //TODO card enc
-
-
-
-

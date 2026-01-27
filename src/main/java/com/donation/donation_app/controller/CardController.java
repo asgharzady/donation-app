@@ -29,30 +29,26 @@ public class CardController {
 
 	@PostMapping("/save")
 	public ResponseEntity<ResponseDTO> save(@Validated @RequestBody CardSaveReqDTO request) {
-		log.info("Save card request for email: " + request.getEmail());
-		String tokenEmail = JwtUtil.getAuthenticatedEmail();
-		if (tokenEmail == null || !tokenEmail.equals(request.getEmail())) {
+		log.info("Save card request for phoneNo: " + request.getPhoneNo());
+		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+		if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
 
 		cardService.saveCard(request);
-		log.info("Card saved for email: " + request.getEmail());
+		log.info("Card saved for phoneNo: " + request.getPhoneNo());
 		return ResponseEntity.ok(new ResponseDTO("success"));
 	}
 
-	@GetMapping("/get/{email}")
-	public ResponseEntity<List<CardDTO>> getCards(@PathVariable String email) {
-		log.info("get card request for email: " + email);
-		String tokenEmail = JwtUtil.getAuthenticatedEmail();
-		if (tokenEmail == null || !tokenEmail.equals(email)) {
+	@GetMapping("/get/{phoneNo}")
+	public ResponseEntity<List<CardDTO>> getCards(@PathVariable String phoneNo) {
+		log.info("get card request for phoneNo: " + phoneNo);
+		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
-		List<CardDTO> cards = cardService.getCards(email);
+		List<CardDTO> cards = cardService.getCards(phoneNo);
 		return ResponseEntity.ok(cards);
 
 	}
 }
-
-
-
-

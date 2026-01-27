@@ -9,7 +9,7 @@ public class SignupReqDTO {
 
     private String firstName;
     private String lastName;
-    private String email;
+    private String phoneNo;
     private String dob;
     @NotBlank(message = "Password is mandatory")
     @Pattern(

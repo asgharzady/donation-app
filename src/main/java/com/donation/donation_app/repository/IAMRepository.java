@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IAMRepository extends JpaRepository<IAM, Long> {
 
-    IAM findByEmail(String email);
+    IAM findByPhoneNo(String phoneNo);
 
-    boolean existsByEmail(String email);
+    boolean existsByPhoneNo(String phoneNo);
 
 
 }

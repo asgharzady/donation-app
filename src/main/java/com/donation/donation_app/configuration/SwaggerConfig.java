@@ -58,7 +58,7 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("API documentation with JWT authentication"))
                 .servers(List.of(
-                        new Server().url("http://uatapi.ozerdal.org/").description("dev Server")
+                        new Server().url("http://localhost:8080/").description("dev Server")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()

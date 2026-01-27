@@ -10,7 +10,7 @@ public class PaymentRequest {
     private CardDTO card;
     private String amount;
     private String status;
-    private String email;
+    private String phoneNo;
     private String toAccount;
 
 }

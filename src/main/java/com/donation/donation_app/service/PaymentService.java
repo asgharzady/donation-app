@@ -58,7 +58,7 @@ public class PaymentService {
     public String doPayment(PaymentRequest paymentRequest){
         Payment payment = new Payment();
         payment.setAmount(paymentRequest.getAmount());
-        payment.setEmail(paymentRequest.getEmail());
+        payment.setPhoneNo(paymentRequest.getPhoneNo());
         payment.setToAccount(paymentRequest.getToAccount());
         payment.setCardNo(paymentRequest.getCard().getCardNo());
         String status = doTrx(paymentRequest);
@@ -73,21 +73,21 @@ public class PaymentService {
         return status;
     }
 
-    public List<PaymentHistoryResponseDTO> getHistory(String email){
-        List<Payment> list = paymentRepository.getAllByEmail(email);
+    public List<PaymentHistoryResponseDTO> getHistory(String phoneNo){
+        List<Payment> list = paymentRepository.getAllByPhoneNo(phoneNo);
         List<PaymentHistoryResponseDTO> response =
         list.stream().map(l-> PaymentHistoryResponseDTO.toDTO(l)).toList();
 
         return response;
     }
 
-    public PaymentStatisticsDTO getStatistics(String email){
+    public PaymentStatisticsDTO getStatistics(String phoneNo){
         PaymentStatisticsDTO response = new PaymentStatisticsDTO();
-        IAM iam = iamRepository.findByEmail(email);
+        IAM iam = iamRepository.findByPhoneNo(phoneNo);
         if(iam == null){
-            throw new CustomException("user now found");
+            throw new CustomException("user not found");
         }
-        List<Payment> list = paymentRepository.getAllByEmail(email);
+        List<Payment> list = paymentRepository.getAllByPhoneNo(phoneNo);
         long totalSuccess = list.stream()
                 .filter(p -> "success".equalsIgnoreCase(p.getStatus()))
                 .count();
@@ -163,5 +163,3 @@ public class PaymentService {
 
     }
 }
-
-

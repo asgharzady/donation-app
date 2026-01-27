@@ -33,43 +33,39 @@ public class PaymentController {
 
 	@PostMapping("/send")
 	public ResponseEntity<ResponseDTO> save(@Validated @RequestBody PaymentRequest request) {
-		log.info("payment request for email: " + request.getEmail());
-		String tokenEmail = JwtUtil.getAuthenticatedEmail();
-		if (tokenEmail == null || !tokenEmail.equals(request.getEmail())) {
+		log.info("payment request for phoneNo: " + request.getPhoneNo());
+		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+		if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
 		String status = paymentService.doPayment(request);
-		log.info("Card saved for email: " + request.getEmail());
+		log.info("Payment processed for phoneNo: " + request.getPhoneNo());
 		return ResponseEntity.ok(new ResponseDTO(status));
 	}
 
-	@GetMapping("/get-history/{email}")
-	public ResponseEntity<List<PaymentHistoryResponseDTO>> getHistroy(@PathVariable String email) {
-		log.info("get history request for email: " + email);
-		String tokenEmail = JwtUtil.getAuthenticatedEmail();
-		if (tokenEmail == null || !tokenEmail.equals(email)) {
+	@GetMapping("/get-history/{phoneNo}")
+	public ResponseEntity<List<PaymentHistoryResponseDTO>> getHistroy(@PathVariable String phoneNo) {
+		log.info("get history request for phoneNo: " + phoneNo);
+		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
-		List<PaymentHistoryResponseDTO> response = paymentService.getHistory(email);
-		log.info("return history for email: " + email);
+		List<PaymentHistoryResponseDTO> response = paymentService.getHistory(phoneNo);
+		log.info("return history for phoneNo: " + phoneNo);
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/get-statistics/{email}")
-	public ResponseEntity<PaymentStatisticsDTO> getStats(@PathVariable String email) {
-		log.info("get stats request for email: " + email);
-		String tokenEmail = JwtUtil.getAuthenticatedEmail();
-		if (tokenEmail == null || !tokenEmail.equals(email)) {
+	@GetMapping("/get-statistics/{phoneNo}")
+	public ResponseEntity<PaymentStatisticsDTO> getStats(@PathVariable String phoneNo) {
+		log.info("get stats request for phoneNo: " + phoneNo);
+		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
+		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
 			throw new CustomException("Unauthorized: wrong token");
 		}
-		PaymentStatisticsDTO response = paymentService.getStatistics(email);
-		log.info("return stats for email: " + email);
+		PaymentStatisticsDTO response = paymentService.getStatistics(phoneNo);
+		log.info("return stats for phoneNo: " + phoneNo);
 		return ResponseEntity.ok(response);
 	}
 
 
 }
-
-
-
-

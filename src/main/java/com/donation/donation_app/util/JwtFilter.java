@@ -28,10 +28,10 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             if (jwtUtil.validateToken(token)) {
-                String email = jwtUtil.extractUsername(token);
+                String phoneNo = jwtUtil.extractUsername(token);
 
-                // Create an Authentication object with email from token
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, null);
+                // Create an Authentication object with phoneNo from token
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(phoneNo, null, null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 // Set the authentication in the SecurityContext

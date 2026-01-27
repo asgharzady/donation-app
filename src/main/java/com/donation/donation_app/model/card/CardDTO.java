@@ -1,6 +1,5 @@
 package com.donation.donation_app.model.card;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

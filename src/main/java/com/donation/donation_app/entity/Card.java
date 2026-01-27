@@ -19,7 +19,7 @@ public class Card {
     private String name;
     private String expDate;
     private String cvv;
-    private String email;
+    private String phoneNo;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

@@ -10,9 +10,8 @@ public class IAMResponseDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private String email;
+    private String phoneNo;
     private String dob;
-    private String mobileNo;
     private String timezone;
     private String defaultPaymentMethod;
     private boolean isBlocked;
@@ -28,9 +27,8 @@ public class IAMResponseDTO {
         dto.setId(iam.getId());
         dto.setFirstName(iam.getFirstName());
         dto.setLastName(iam.getLastName());
-        dto.setEmail(iam.getEmail());
+        dto.setPhoneNo(iam.getPhoneNo());
         dto.setDob(iam.getDob());
-        dto.setMobileNo(iam.getMobileNo());
         dto.setTimezone(iam.getTimezone());
         dto.setDefaultPaymentMethod(iam.getDefaultPaymentMethod());
         dto.setBlocked(iam.isBlocked());

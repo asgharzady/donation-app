@@ -17,7 +17,7 @@ public class Payment {
     private Long id;
     private String amount;
     private String status;
-    private String email;
+    private String phoneNo;
     private String toAccount;
     private String cardNo;
     @CreationTimestamp

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
-    ArrayList<Card> findAllByEmail(String email);
+    ArrayList<Card> findAllByPhoneNo(String phoneNo);
 }
 
 

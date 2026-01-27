@@ -11,7 +11,7 @@ import java.time.Instant;
     public class PaymentHistoryResponseDTO {
     private String amount;
     private String status;
-    private String email;
+    private String phoneNo;
     private String toAccount;
 
     private Instant createdAt;
@@ -21,7 +21,7 @@ import java.time.Instant;
         PaymentHistoryResponseDTO response = new PaymentHistoryResponseDTO();
         response.setAmount(payment.getAmount());
         response.setStatus(payment.getStatus());
-        response.setEmail(payment.getEmail());
+        response.setPhoneNo(payment.getPhoneNo());
         response.setToAccount(payment.getToAccount());
         response.setCreatedAt(payment.getCreatedAt());
         return response;

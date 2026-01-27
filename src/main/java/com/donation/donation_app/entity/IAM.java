@@ -17,9 +17,8 @@ public class IAM {
     private Long id;
     private String firstName;
     private String lastName;
-    private String email;
+    private String phoneNo;
     private String dob;
-    private String mobileNo;
     private String timezone;
     private String defaultPaymentMethod;
     private String password;
@@ -31,7 +30,7 @@ public class IAM {
 
 
     public boolean isComplete() {
-        return Stream.of(firstName, lastName, email, dob, mobileNo,timezone,defaultPaymentMethod)
+        return Stream.of(firstName, lastName, phoneNo, dob, timezone, defaultPaymentMethod)
                 .allMatch(f -> f != null && !f.trim().isEmpty());
     }
 }

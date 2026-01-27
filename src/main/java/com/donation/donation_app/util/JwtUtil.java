@@ -48,7 +48,7 @@ public class JwtUtil {
 
     /**
      * Generates a refresh token with longer expiration time
-     * @param username the username/email to include in the token
+     * @param username the username/phoneNo to include in the token
      * @return the refresh token string
      */
     public String generateRefreshToken(String username) {
@@ -77,7 +77,7 @@ public class JwtUtil {
     /**
      * Extracts username from refresh token
      * @param token the refresh token
-     * @return the username/email from the token
+     * @return the username/phoneNo from the token
      */
     public String extractUsernameFromRefreshToken(String token) {
         try {
@@ -96,10 +96,10 @@ public class JwtUtil {
     }
 
     /**
-     * Gets the authenticated email from SecurityContext
-     * @return email from token, or null if not authenticated
+     * Gets the authenticated phoneNo from SecurityContext
+     * @return phoneNo from token, or null if not authenticated
      */
-    public static String getAuthenticatedEmail() {
+    public static String getAuthenticatedPhoneNo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() != null) {
             return (String) authentication.getPrincipal();
