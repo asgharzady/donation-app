@@ -3,13 +3,7 @@ package com.donation.donation_app.controller;
 
 import com.donation.donation_app.Exception.CustomException;
 import com.donation.donation_app.entity.IAM;
-import com.donation.donation_app.model.IAMResponseDTO;
-import com.donation.donation_app.model.LoginReqDTO;
-import com.donation.donation_app.model.ProfileSetupReqDTO;
-import com.donation.donation_app.model.RefreshTokenRequestDTO;
-import com.donation.donation_app.model.ResponseDTO;
-import com.donation.donation_app.model.SignupReqDTO;
-import com.donation.donation_app.model.TokenResponseDTO;
+import com.donation.donation_app.model.*;
 import com.donation.donation_app.service.IAMService;
 import com.donation.donation_app.util.JwtUtil;
 import org.slf4j.Logger;
@@ -60,6 +54,34 @@ public class IAMController {
         log.info("Login successful for user: " + request.getPhoneNo());
         return ResponseEntity.ok().body(new TokenResponseDTO(accessToken, refreshToken));
     }
+
+    @PostMapping(value = "/login-profile")
+    public ResponseEntity<TokenResponseProfileDTO> loginUserProfile(@RequestBody LoginReqDTO request) {
+        log.info("login request: " + request.getPhoneNo());
+        iamService.login(request);
+
+        // Generate access token
+        String accessToken = jwtUtil.generateToken(request.getPhoneNo());
+
+        // Generate refresh token
+        String refreshToken = jwtUtil.generateRefreshToken(request.getPhoneNo());
+
+        // Calculate expiry date (7 days from now)
+        Instant expiryDate = Instant.now().plusSeconds(7 * 24 * 60 * 60);
+
+        // Save refresh token to database
+        iamService.saveRefreshToken(refreshToken, request.getPhoneNo(), expiryDate);
+
+        log.info("Login successful for user: " + request.getPhoneNo());
+
+        IAMResponseDTO user = iamService.getByPhoneNo(request.getPhoneNo());
+        TokenResponseDTO tokenResponseDTO = new TokenResponseDTO(accessToken, refreshToken);
+        return ResponseEntity.ok().body(new TokenResponseProfileDTO(tokenResponseDTO, user));
+    }
+
+
+
+
 
     @PostMapping(value = "/profile-setup")
     public ResponseEntity<ResponseDTO> profileSetup(@Validated @RequestBody ProfileSetupReqDTO request) {
