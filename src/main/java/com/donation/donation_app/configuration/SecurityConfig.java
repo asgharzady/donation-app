@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**",
                         "/user/sign-up",
                         "/user/profile-setup",
+                        "/user/login-profile",
                         "/user/login",
                         "/user/refresh",
                         "/v3/api-docs/**",
