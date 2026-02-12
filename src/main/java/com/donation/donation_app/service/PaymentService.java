@@ -60,7 +60,7 @@ public class PaymentService {
         payment.setAmount(paymentRequest.getAmount());
         payment.setPhoneNo(paymentRequest.getPhoneNo());
         String status = doTrx(paymentRequest);
-        if(status.equals("SUCCESS")){
+        if(status.equals("1")){
             payment.setStatus("success");
         }
         else{
@@ -157,7 +157,7 @@ public class PaymentService {
             String respText = respMap.getOrDefault("responsetext", "");
 
 //            return "1".equals(respFlag) || "100".equals(respCode) || respText.toUpperCase().contains("SUCCESS");
-            return respText;
+            return respFlag;
 
     }
 }
