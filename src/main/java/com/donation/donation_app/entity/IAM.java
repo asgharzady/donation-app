@@ -20,6 +20,7 @@ public class IAM {
     private String phoneNo;
     private String dob;
     private String timezone;
+    private String email;
     private String defaultPaymentMethod;
     private String password;
     private boolean isBlocked = false;

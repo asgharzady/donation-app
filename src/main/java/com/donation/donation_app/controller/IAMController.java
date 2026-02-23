@@ -1,6 +1,5 @@
 package com.donation.donation_app.controller;
 
-
 import com.donation.donation_app.Exception.CustomException;
 import com.donation.donation_app.entity.IAM;
 import com.donation.donation_app.model.*;
@@ -27,7 +26,8 @@ public class IAMController {
     private JwtUtil jwtUtil;
 
     @PostMapping(value = "/sign-up")
-    public ResponseEntity<ResponseDTO> SignUpUser(@Validated(SignupReqDTO.PasswordRequired.class) @RequestBody SignupReqDTO request) {
+    public ResponseEntity<ResponseDTO> SignUpUser(
+            @Validated(SignupReqDTO.PasswordRequired.class) @RequestBody SignupReqDTO request) {
         log.info("Sign up request for phoneNo: " + request.getPhoneNo());
         iamService.SignUp(request);
         log.info("returning ok for signup req: " + request.getPhoneNo());
@@ -38,19 +38,19 @@ public class IAMController {
     public ResponseEntity<TokenResponseDTO> loginUser(@RequestBody LoginReqDTO request) {
         log.info("login request: " + request.getPhoneNo());
         iamService.login(request);
-        
+
         // Generate access token
         String accessToken = jwtUtil.generateToken(request.getPhoneNo());
-        
+
         // Generate refresh token
         String refreshToken = jwtUtil.generateRefreshToken(request.getPhoneNo());
-        
+
         // Calculate expiry date (7 days from now)
         Instant expiryDate = Instant.now().plusSeconds(7 * 24 * 60 * 60);
-        
+
         // Save refresh token to database
         iamService.saveRefreshToken(refreshToken, request.getPhoneNo(), expiryDate);
-        
+
         log.info("Login successful for user: " + request.getPhoneNo());
         return ResponseEntity.ok().body(new TokenResponseDTO(accessToken, refreshToken));
     }
@@ -79,9 +79,21 @@ public class IAMController {
         return ResponseEntity.ok().body(new TokenResponseProfileDTO(tokenResponseDTO, user));
     }
 
+    @PostMapping(value = "/reset-password")
+    public ResponseEntity<ResponseDTO> resetPassword(@RequestBody ResetPasswordReqDTO request) {
+        log.info("Reset password request for phoneNo: " + request.getPhoneNo());
+        iamService.resetPassword(request);
+        log.info("Reset password successful for phoneNo: " + request.getPhoneNo());
+        return ResponseEntity.ok(new ResponseDTO("Password reset successful"));
+    }
 
-
-
+    @PostMapping(value = "/forget-password")
+    public ResponseEntity<ResponseDTO> forgetPassword(@RequestBody ForgetPasswordReqDTO request) {
+        log.info("Forget password request for phoneNo: " + request.getPhoneNo());
+        iamService.forgetPassword(request);
+        log.info("Forget password successful for phoneNo: " + request.getPhoneNo());
+        return ResponseEntity.ok(new ResponseDTO("Password reset successful"));
+    }
 
     @PostMapping(value = "/profile-setup")
     public ResponseEntity<ResponseDTO> profileSetup(@Validated @RequestBody ProfileSetupReqDTO request) {
@@ -98,17 +110,17 @@ public class IAMController {
     @PostMapping(value = "/refresh")
     public ResponseEntity<TokenResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO request) {
         log.info("Refresh token request received");
-        
+
         if (request.getRefreshToken() == null || request.getRefreshToken().isEmpty()) {
             throw new CustomException("Refresh token is required");
         }
-        
+
         // Validate refresh token and get user
         IAM user = iamService.validateAndGetUser(request.getRefreshToken());
-        
+
         // Generate new access token for the user
         String newAccessToken = jwtUtil.generateToken(user.getPhoneNo());
-        
+
         log.info("New access token generated for user: " + user.getPhoneNo());
         return ResponseEntity.ok().body(new TokenResponseDTO(newAccessToken, request.getRefreshToken()));
     }
@@ -120,7 +132,7 @@ public class IAMController {
         if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
             throw new CustomException("Unauthorized: wrong token");
         }
-        
+
         IAMResponseDTO user = iamService.getByPhoneNo(phoneNo);
         log.info("Returning user data for phoneNo: " + phoneNo);
         return ResponseEntity.ok(user);
@@ -137,7 +149,5 @@ public class IAMController {
         log.info("Returning is profile completed for phoneNo: " + phoneNo);
         return ResponseEntity.ok(isProfileCompleted);
     }
-
-
 
 }

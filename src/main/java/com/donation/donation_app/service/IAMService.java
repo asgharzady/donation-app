@@ -7,6 +7,8 @@ import com.donation.donation_app.model.IAMResponseDTO;
 import com.donation.donation_app.model.LoginReqDTO;
 import com.donation.donation_app.model.ProfileSetupReqDTO;
 import com.donation.donation_app.model.SignupReqDTO;
+import com.donation.donation_app.model.ResetPasswordReqDTO;
+import com.donation.donation_app.model.ForgetPasswordReqDTO;
 import com.donation.donation_app.repository.IAMRepository;
 import com.donation.donation_app.repository.RefreshTokenRepository;
 import com.donation.donation_app.util.JwtUtil;
@@ -42,6 +44,9 @@ public class IAMService {
 
     public void SignUp(SignupReqDTO request) {
         IAM checkExistingUser = iamRepository.findByPhoneNo(request.getPhoneNo());
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new CustomException("email can not be empty !");
+        }
         if (checkExistingUser != null) {
             throw new CustomException("username already taken !");
         } else {
@@ -51,6 +56,7 @@ public class IAMService {
             iam.setLastName(request.getLastName());
             iam.setPhoneNo(request.getPhoneNo());
             iam.setDob(request.getDob());
+            iam.setEmail(request.getEmail());
             iam.setPassword(passwordEncoder.encode(request.getPassword()));
             iam.setBlocked(false);
             iamRepository.save(iam);
@@ -83,6 +89,38 @@ public class IAMService {
         }
     }
 
+    @Transactional
+    public void resetPassword(ResetPasswordReqDTO request) {
+        IAM user = iamRepository.findByPhoneNo(request.getPhoneNo());
+        if (user == null) {
+            log.info("User not found for phoneNo: " + request.getPhoneNo());
+            throw new CustomException("User not found!");
+        } else if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            log.info("Wrong current password for user: " + request.getPhoneNo());
+            throw new CustomException("wrong password !");
+        } else {
+            log.info("Resetting password for user: " + request.getPhoneNo());
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            iamRepository.save(user);
+        }
+    }
+
+    @Transactional
+    public void forgetPassword(ForgetPasswordReqDTO request) {
+        IAM user = iamRepository.findByPhoneNo(request.getPhoneNo());
+        if (user == null) {
+            log.info("User not found for phoneNo: " + request.getPhoneNo());
+            throw new CustomException("User not found!");
+        } else if (request.getEmail() == null || !request.getEmail().equals(user.getEmail())) {
+            log.info("Email mismatch for user: " + request.getPhoneNo());
+            throw new CustomException("Email does not match our records!");
+        } else {
+            log.info("Resetting forgotten password for user: " + request.getPhoneNo());
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            iamRepository.save(user);
+        }
+    }
+
     public IAMResponseDTO getByPhoneNo(String phoneNo) {
         IAM user = iamRepository.findByPhoneNo(phoneNo);
         if (user == null) {
@@ -90,15 +128,16 @@ public class IAMService {
             throw new CustomException("User not found with this phone number!");
         }
         log.info("Retrieved user successfully for phoneNo: " + phoneNo);
-        
+
         // Convert IAM entity to IAMResponseDTO using static toDTO method
         return IAMResponseDTO.toDTO(user);
     }
 
     /**
      * Saves a refresh token for a user
-     * @param token the refresh token string
-     * @param phoneNo the user's phone number
+     * 
+     * @param token      the refresh token string
+     * @param phoneNo    the user's phone number
      * @param expiryDate the expiration date of the token
      */
     @Transactional
@@ -158,7 +197,7 @@ public class IAMService {
         log.info("Refresh token deleted");
     }
 
-    public boolean isProfileCompleted(String phoneNo){
+    public boolean isProfileCompleted(String phoneNo) {
         IAM user = iamRepository.findByPhoneNo(phoneNo);
         if (user == null) {
             throw new CustomException("User not found with phoneNo: " + phoneNo);
