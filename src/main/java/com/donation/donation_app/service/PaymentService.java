@@ -83,7 +83,7 @@ public class PaymentService {
         PaymentStatisticsDTO response = new PaymentStatisticsDTO();
         IAM iam = iamRepository.findByPhoneNo(phoneNo);
         if(iam == null){
-            throw new CustomException("user not found");
+            throw new CustomException("user not found", "usuario no encontrado");
         }
         List<Payment> list = paymentRepository.getAllByPhoneNo(phoneNo);
         long totalSuccess = list.stream()

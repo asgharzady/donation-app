@@ -13,12 +13,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ResponseDTO> handleResourceNotFoundException(CustomException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(ex.getMessage() , ex.spanish));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO> handleGlobalException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseDTO(ex.getMessage(), "Ha ocurrido un error inesperado"));
     }
 
 
@@ -35,6 +36,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .badRequest()
-                .body(new ResponseDTO(errorMessage));
+                .body(new ResponseDTO(errorMessage, "Error de validación: " + errorMessage));
     }
 }

@@ -4,8 +4,15 @@ import lombok.Data;
 
 @Data
 public class ResponseDTO {
-    private String message;
-    public ResponseDTO(String message) {
-        this.message = message;
+    private String english;
+    private String spanish;
+    public ResponseDTO(String english,String spanish) {
+        this.english = english;
+        this.spanish = spanish;
+    }
+
+    public ResponseDTO(String english) {
+        this.english = english;
+        this.spanish = "";
     }
 }

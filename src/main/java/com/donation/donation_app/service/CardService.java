@@ -28,7 +28,7 @@ public class CardService {
 
 	public void saveCard(CardSaveReqDTO request) {
 		if (!iamRepository.existsByPhoneNo(request.getPhoneNo())) {
-			throw new CustomException("phone number not found");
+			throw new CustomException("phone number not found", "número de teléfono no encontrado");
 		}
 
 		Card card = new Card();

@@ -28,16 +28,16 @@ public class HolidayService {
         log.info("Creating holiday: " + request.getName());
         
         if (request.getName() == null || request.getName().trim().isEmpty()) {
-            throw new CustomException("Holiday name is required");
+            throw new CustomException("Holiday name is required", "Se requiere el nombre del día festivo");
         }
         if (request.getStartTime() == null) {
-            throw new CustomException("Start time is required");
+            throw new CustomException("Start time is required", "Se requiere la hora de inicio");
         }
         if (request.getEndTime() == null) {
-            throw new CustomException("End time is required");
+            throw new CustomException("End time is required", "Se requiere la hora de finalización");
         }
         if (request.getStartTime().isAfter(request.getEndTime())) {
-            throw new CustomException("Start time must be before end time");
+            throw new CustomException("Start time must be before end time", "La hora de inicio debe ser anterior a la hora de finalización");
         }
 
         Holiday holiday = new Holiday();
@@ -55,7 +55,7 @@ public class HolidayService {
         Holiday holiday = holidayRepository.findById(id)
                 .orElseThrow(() -> {
                     log.info("Holiday not found with id: " + id);
-                    return new CustomException("Holiday not found with id: " + id);
+                    return new CustomException("Holiday not found with id: " + id, "Día festivo no encontrado con el id: " + id);
                 });
 
         // Only update fields that are passed (not null)
@@ -72,7 +72,7 @@ public class HolidayService {
         // Validate start time is before end time if both are set
         if (holiday.getStartTime() != null && holiday.getEndTime() != null) {
             if (holiday.getStartTime().isAfter(holiday.getEndTime())) {
-                throw new CustomException("Start time must be before end time");
+                throw new CustomException("Start time must be before end time", "La hora de inicio debe ser anterior a la hora de finalización");
             }
         }
 
@@ -86,7 +86,7 @@ public class HolidayService {
         Holiday holiday = holidayRepository.findById(id)
                 .orElseThrow(() -> {
                     log.info("Holiday not found with id: " + id);
-                    return new CustomException("Holiday not found with id: " + id);
+                    return new CustomException("Holiday not found with id: " + id, "Día festivo no encontrado con el id: " + id);
                 });
 
         holidayRepository.delete(holiday);

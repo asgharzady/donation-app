@@ -36,7 +36,7 @@ public class PaymentController {
 		log.info("payment request for phoneNo: " + request.getPhoneNo());
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
-			throw new CustomException("Unauthorized: wrong token");
+			throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
 		}
 		PaymentHistoryResponseDTO response = paymentService.doPayment(request);
 		log.info("Payment processed for phoneNo: " + request.getPhoneNo());
@@ -48,7 +48,7 @@ public class PaymentController {
 		log.info("get history request for phoneNo: " + phoneNo);
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
-			throw new CustomException("Unauthorized: wrong token");
+			throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
 		}
 		List<PaymentHistoryResponseDTO> response = paymentService.getHistory(phoneNo);
 		log.info("return history for phoneNo: " + phoneNo);
@@ -60,7 +60,7 @@ public class PaymentController {
 		log.info("get stats request for phoneNo: " + phoneNo);
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
-			throw new CustomException("Unauthorized: wrong token");
+			throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
 		}
 		PaymentStatisticsDTO response = paymentService.getStatistics(phoneNo);
 		log.info("return stats for phoneNo: " + phoneNo);

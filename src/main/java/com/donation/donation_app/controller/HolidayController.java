@@ -30,7 +30,7 @@ public class HolidayController {
         log.info("Create holiday request: " + request.getName());
         holidayService.createHoliday(request);
         log.info("Holiday created successfully: " + request.getName());
-        return ResponseEntity.ok(new ResponseDTO("Holiday created successfully"));
+        return ResponseEntity.ok(new ResponseDTO("Holiday created successfully", "Día festivo creado con éxito"));
     }
 
     @PutMapping(value = "/update/{id}")
@@ -38,7 +38,7 @@ public class HolidayController {
         log.info("Update holiday request for id: " + id);
         holidayService.updateHoliday(id, request);
         log.info("Holiday updated successfully for id: " + id);
-        return ResponseEntity.ok(new ResponseDTO("Holiday updated successfully"));
+        return ResponseEntity.ok(new ResponseDTO("Holiday updated successfully", "Día festivo actualizado con éxito"));
     }
 
     @DeleteMapping(value = "/delete/{id}")
@@ -46,7 +46,7 @@ public class HolidayController {
         log.info("Delete holiday request for id: " + id);
         holidayService.deleteHoliday(id);
         log.info("Holiday deleted successfully for id: " + id);
-        return ResponseEntity.ok(new ResponseDTO("Holiday deleted successfully"));
+        return ResponseEntity.ok(new ResponseDTO("Holiday deleted successfully", "Día festivo eliminado con éxito"));
     }
 
     @GetMapping(value = "/get-all")

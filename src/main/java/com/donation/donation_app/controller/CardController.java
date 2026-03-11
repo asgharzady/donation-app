@@ -32,12 +32,12 @@ public class CardController {
 		log.info("Save card request for phoneNo: " + request.getPhoneNo());
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
-			throw new CustomException("Unauthorized: wrong token");
+			throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
 		}
 
 		cardService.saveCard(request);
 		log.info("Card saved for phoneNo: " + request.getPhoneNo());
-		return ResponseEntity.ok(new ResponseDTO("success"));
+		return ResponseEntity.ok(new ResponseDTO("success", "éxito"));
 	}
 
 	@GetMapping("/get/{phoneNo}")
@@ -45,7 +45,7 @@ public class CardController {
 		log.info("get card request for phoneNo: " + phoneNo);
 		String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
 		if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
-			throw new CustomException("Unauthorized: wrong token");
+			throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
 		}
 		List<CardDTO> cards = cardService.getCards(phoneNo);
 		return ResponseEntity.ok(cards);

@@ -45,10 +45,10 @@ public class IAMService {
     public void SignUp(SignupReqDTO request) {
         IAM checkExistingUser = iamRepository.findByPhoneNo(request.getPhoneNo());
         if (request.getEmail() == null || request.getEmail().isEmpty()) {
-            throw new CustomException("email can not be empty !");
+            throw new CustomException("email can not be empty !", "¡El correo electrónico no puede estar vacío!");
         }
         if (checkExistingUser != null) {
-            throw new CustomException("username already taken !");
+            throw new CustomException("username already taken !", "¡El nombre de usuario ya está en uso!");
         } else {
             log.info("creating account with username " + request.getPhoneNo());
             IAM iam = new IAM();
@@ -67,10 +67,10 @@ public class IAMService {
         IAM checkExistingUser = iamRepository.findByPhoneNo(request.getPhoneNo());
         if (checkExistingUser == null) {
             log.info("username not found for user: " + request.getPhoneNo());
-            throw new CustomException("username not found !");
+            throw new CustomException("username not found !", "¡Nombre de usuario no encontrado!");
         } else if (!passwordEncoder.matches(request.getPassword(), checkExistingUser.getPassword())) {
             log.info("wrong password for user: " + request.getPhoneNo());
-            throw new CustomException("wrong password !");
+            throw new CustomException("wrong password !", "¡Contraseña incorrecta!");
         }
     }
 
@@ -79,7 +79,7 @@ public class IAMService {
         IAM existingUser = iamRepository.findByPhoneNo(request.getPhoneNo());
         if (existingUser == null) {
             log.info("User not found for phoneNo: " + request.getPhoneNo());
-            throw new CustomException("User account not found with this phone number!");
+            throw new CustomException("User account not found with this phone number!", "¡Usuario no encontrado con este número de teléfono!");
         } else {
             log.info("Updating profile for user: " + request.getPhoneNo());
             existingUser.setTimezone(request.getTimezone());
@@ -94,10 +94,10 @@ public class IAMService {
         IAM user = iamRepository.findByPhoneNo(request.getPhoneNo());
         if (user == null) {
             log.info("User not found for phoneNo: " + request.getPhoneNo());
-            throw new CustomException("User not found!");
+            throw new CustomException("User not found!", "¡Usuario no encontrado!");
         } else if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             log.info("Wrong current password for user: " + request.getPhoneNo());
-            throw new CustomException("wrong password !");
+            throw new CustomException("wrong password !", "¡Contraseña incorrecta!");
         } else {
             log.info("Resetting password for user: " + request.getPhoneNo());
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -110,10 +110,10 @@ public class IAMService {
         IAM user = iamRepository.findByPhoneNo(request.getPhoneNo());
         if (user == null) {
             log.info("User not found for phoneNo: " + request.getPhoneNo());
-            throw new CustomException("User not found!");
+            throw new CustomException("User not found!", "¡Usuario no encontrado!");
         } else if (request.getEmail() == null || !request.getEmail().equals(user.getEmail())) {
             log.info("Email mismatch for user: " + request.getPhoneNo());
-            throw new CustomException("Email does not match our records!");
+            throw new CustomException("Email does not match our records!", "¡El correo electrónico no coincide con nuestros registros!");
         } else {
             log.info("Resetting forgotten password for user: " + request.getPhoneNo());
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -125,7 +125,7 @@ public class IAMService {
         IAM user = iamRepository.findByPhoneNo(phoneNo);
         if (user == null) {
             log.info("User not found for phoneNo: " + phoneNo);
-            throw new CustomException("User not found with this phone number!");
+            throw new CustomException("User not found with this phone number!", "¡Usuario no encontrado con este número de teléfono!");
         }
         log.info("Retrieved user successfully for phoneNo: " + phoneNo);
 
@@ -144,7 +144,7 @@ public class IAMService {
     public void saveRefreshToken(String token, String phoneNo, Instant expiryDate) {
         IAM user = iamRepository.findByPhoneNo(phoneNo);
         if (user == null) {
-            throw new CustomException("User not found with phoneNo: " + phoneNo);
+            throw new CustomException("User not found with phoneNo: " + phoneNo, "Usuario no encontrado con el número: " + phoneNo);
         }
 
         // Delete any existing refresh tokens for this user
@@ -163,28 +163,28 @@ public class IAMService {
         // First validate the JWT token structure
         if (!jwtUtil.validateRefreshToken(refreshToken)) {
             log.info("Invalid refresh token structure");
-            throw new CustomException("Invalid refresh token");
+            throw new CustomException("Invalid refresh token", "Token de actualización inválido");
         }
 
         // Check if token exists in database
         RefreshToken tokenEntity = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> {
                     log.info("Refresh token not found in database");
-                    return new CustomException("Invalid refresh token");
+                    return new CustomException("Invalid refresh token", "Token de actualización inválido");
                 });
 
         // Check if token is expired
         if (tokenEntity.getExpiryDate().isBefore(Instant.now())) {
             log.info("Refresh token expired for user: " + tokenEntity.getUser().getPhoneNo());
             refreshTokenRepository.deleteByToken(refreshToken);
-            throw new CustomException("Refresh token expired");
+            throw new CustomException("Refresh token expired", "El token de actualización ha expirado");
         }
 
         // Verify the user from token matches the database user
         String tokenPhoneNo = jwtUtil.extractUsernameFromRefreshToken(refreshToken);
         if (!tokenPhoneNo.equals(tokenEntity.getUser().getPhoneNo())) {
             log.info("Token phoneNo mismatch");
-            throw new CustomException("Invalid refresh token");
+            throw new CustomException("Invalid refresh token", "Token de actualización inválido");
         }
 
         log.info("Refresh token validated for user: " + tokenEntity.getUser().getPhoneNo());
@@ -200,7 +200,7 @@ public class IAMService {
     public boolean isProfileCompleted(String phoneNo) {
         IAM user = iamRepository.findByPhoneNo(phoneNo);
         if (user == null) {
-            throw new CustomException("User not found with phoneNo: " + phoneNo);
+            throw new CustomException("User not found with phoneNo: " + phoneNo, "Usuario no encontrado con el número: " + phoneNo);
         }
         return user.isComplete();
 

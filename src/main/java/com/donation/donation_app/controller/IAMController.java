@@ -31,7 +31,7 @@ public class IAMController {
         log.info("Sign up request for phoneNo: " + request.getPhoneNo());
         iamService.SignUp(request);
         log.info("returning ok for signup req: " + request.getPhoneNo());
-        return ResponseEntity.ok(new ResponseDTO("sign up successful"));
+        return ResponseEntity.ok(new ResponseDTO("sign up successful", "registro exitoso"));
     }
 
     @PostMapping(value = "/login")
@@ -84,7 +84,7 @@ public class IAMController {
         log.info("Reset password request for phoneNo: " + request.getPhoneNo());
         iamService.resetPassword(request);
         log.info("Reset password successful for phoneNo: " + request.getPhoneNo());
-        return ResponseEntity.ok(new ResponseDTO("Password reset successful"));
+        return ResponseEntity.ok(new ResponseDTO("Password reset successful", "Restablecimiento de contraseña exitoso"));
     }
 
     @PostMapping(value = "/forget-password")
@@ -92,7 +92,7 @@ public class IAMController {
         log.info("Forget password request for phoneNo: " + request.getPhoneNo());
         iamService.forgetPassword(request);
         log.info("Forget password successful for phoneNo: " + request.getPhoneNo());
-        return ResponseEntity.ok(new ResponseDTO("Password reset successful"));
+        return ResponseEntity.ok(new ResponseDTO("Password reset successful", "Restablecimiento de contraseña exitoso"));
     }
 
     @PostMapping(value = "/profile-setup")
@@ -100,11 +100,11 @@ public class IAMController {
         log.info("Profile setup request for phoneNo: " + request.getPhoneNo());
         String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
         if (tokenPhoneNo == null || !tokenPhoneNo.equals(request.getPhoneNo())) {
-            throw new CustomException("Unauthorized: wrong token");
+            throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
         }
         iamService.profileSetup(request);
         log.info("Profile setup completed successfully for phoneNo: " + request.getPhoneNo());
-        return ResponseEntity.ok(new ResponseDTO("Profile setup successful"));
+        return ResponseEntity.ok(new ResponseDTO("Profile setup successful", "Configuración de perfil exitosa"));
     }
 
     @PostMapping(value = "/refresh")
@@ -112,7 +112,7 @@ public class IAMController {
         log.info("Refresh token request received");
 
         if (request.getRefreshToken() == null || request.getRefreshToken().isEmpty()) {
-            throw new CustomException("Refresh token is required");
+            throw new CustomException("Refresh token is required", "Se requiere token de actualización");
         }
 
         // Validate refresh token and get user
@@ -130,7 +130,7 @@ public class IAMController {
         log.info("Get user request for phoneNo: " + phoneNo);
         String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
         if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
-            throw new CustomException("Unauthorized: wrong token");
+            throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
         }
 
         IAMResponseDTO user = iamService.getByPhoneNo(phoneNo);
@@ -143,7 +143,7 @@ public class IAMController {
         log.info("get is profile completed for phoneNo: " + phoneNo);
         String tokenPhoneNo = JwtUtil.getAuthenticatedPhoneNo();
         if (tokenPhoneNo == null || !tokenPhoneNo.equals(phoneNo)) {
-            throw new CustomException("Unauthorized: wrong token");
+            throw new CustomException("Unauthorized: wrong token", "No autorizado: token incorrecto");
         }
         boolean isProfileCompleted = iamService.isProfileCompleted(phoneNo);
         log.info("Returning is profile completed for phoneNo: " + phoneNo);
